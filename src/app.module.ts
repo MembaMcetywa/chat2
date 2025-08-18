@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -10,13 +11,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.PGHOST,
-      port: process.env.PGPORT,
+      port: Number(process.env.PGPORT),
       username: process.env.PGUSER,
       password: process.env.PGPASSWORD,
       database: process.env.PGDATABASE,
       entities: [],
       synchronize: false,
     }),
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
