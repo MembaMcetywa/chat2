@@ -125,4 +125,33 @@ export class ChatGateway
       .to(`channel:${data.channelId}`)
       .emit('typing', { userId, channelId: data.channelId });
   }
+
+  @SubscribeMessage('message.history')
+  async onHistory(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: { channelId: number; limit?: number; before?: string },
+  ): Promise<void> {
+    const userId = (client.data.user as JwtUser).id;
+    await this.chat.assertMember(data.channelId, userId);
+
+    const beforeDate = data.before ? new Date(data.before) : undefined;
+    const limit = data.limit ?? 50;
+
+    const messages = await this.chat.listMessages(
+      data.channelId,
+      limit,
+      beforeDate,
+    );
+
+    client.emit('message.history', {
+      channelId: data.channelId,
+      items: messages,
+      paging: {
+        limit,
+        before: messages.length ? messages[0].created_at : null,
+        count: messages.length,
+      },
+    });
+  }
 }
