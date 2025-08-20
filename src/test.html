@@ -11,9 +11,18 @@
   socket.on('channel.joined', (payload) => console.log('joined:', payload)); 
   socket.on('message.send', (payload) => console.log('joined:', payload)); 
 
+  socket.on('message.history', (res) => {
+  console.log('history:', res);
+});
+
   function join(channelId){ socket.emit('channel.join', { channelId }); }
   
   function send(channelId, text){ socket.emit('message.send', { channelId, payload: { text } }); }
+
+  function history(channelId){
+  socket.once('message.history', (res) => console.log(res.items));
+  socket.emit('message.history', { channelId });
+}
 
   socket.on('connect_error', (err) => console.error('connect_error:', err.message));
 
