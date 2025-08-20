@@ -22,7 +22,7 @@ export class ChatService {
     @InjectRepository(User) private users: Repository<User>,
   ) {}
 
-  private async assertMember(channelId: number, userId: string) {
+  public async assertMember(channelId: number, userId: string) {
     const member = await this.memberships.findOne({
       where: { channel: { id: channelId }, user: { id: userId } },
       relations: { channel: true, user: true },
@@ -77,20 +77,18 @@ export class ChatService {
       order: { created_at: 'DESC' },
       take: limit,
     });
-    return rows
-      .map((r) => ({
-        id: r.id,
-        channelId,
-        sender: {
-          id: r.sender.id,
-          username: r.sender.username,
-          avatar_url: r.sender.avatar_url,
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        payload: decryptMessage(r.iv, r.auth_tag, r.encrypted_payload),
-        reply_to: r.reply_to ?? null,
-        created_at: r.created_at,
-      }))
-      .reverse();
+    return rows.map((r) => ({
+      id: r.id,
+      channelId,
+      sender: {
+        id: r.sender.id,
+        username: r.sender.username,
+        avatar_url: r.sender.avatar_url,
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      payload: decryptMessage(r.iv, r.auth_tag, r.encrypted_payload),
+      reply_to: r.reply_to ?? null,
+      created_at: r.created_at,
+    }));
   }
 }
