@@ -4,6 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatModule } from './chat/chat.module';
+import { Channel } from 'diagnostics_channel';
+import { ChannelMembership } from './entities/channel-membership-entity';
+import { Message } from './entities/message.entity';
+import { User } from './entities/user.entity';
 
 @Module({
   imports: [
@@ -15,8 +19,9 @@ import { ChatModule } from './chat/chat.module';
       username: process.env.PGUSER,
       password: process.env.PGPASSWORD,
       database: process.env.PGDATABASE,
-      entities: [],
+      entities: [User, Channel, ChannelMembership, Message],
       synchronize: false,
+      autoLoadEntities: true,
     }),
     ChatModule,
   ],
