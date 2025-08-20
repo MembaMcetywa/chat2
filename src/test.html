@@ -1,0 +1,21 @@
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIzNDdmYTcwLTBmYjEtNGZiZS1iMzU4LWM2MTFkZjA5ZmZlMSIsInVzZXJuYW1lIjoibWVtYmEiLCJpYXQiOjE3NTU2NzUyOTIsImV4cCI6MTc1NTcxMTI5Mn0.OwFTCd8Pk9iPx9qQo584Tznjea-qofSEbCZ6lQjvsps';
+  const socket = io('http://localhost:3001/chat', { auth: { token } });
+
+  socket.on('connect', () => console.log('connected'));
+  socket.on('user.online', console.log);
+  socket.on('user.offline', console.log);
+  socket.on('message.new', console.log);
+  socket.on('channel.joined', (payload) => console.log('joined:', payload)); 
+  socket.on('message.send', (payload) => console.log('joined:', payload)); 
+
+  function join(channelId){ socket.emit('channel.join', { channelId }); }
+  
+  function send(channelId, text){ socket.emit('message.send', { channelId, payload: { text } }); }
+
+  socket.on('connect_error', (err) => console.error('connect_error:', err.message));
+
+
+</script>

@@ -3,6 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatModule } from './chat/chat.module';
+import { Channel } from 'diagnostics_channel';
+import { ChannelMembership } from './entities/channel-membership-entity';
+import { Message } from './entities/message.entity';
+import { User } from './entities/user.entity';
 
 @Module({
   imports: [
@@ -10,13 +15,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.PGHOST,
-      port: process.env.PGPORT,
+      port: Number(process.env.PGPORT),
       username: process.env.PGUSER,
       password: process.env.PGPASSWORD,
       database: process.env.PGDATABASE,
-      entities: [],
+      entities: [User, Channel, ChannelMembership, Message],
       synchronize: false,
+      autoLoadEntities: true,
     }),
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

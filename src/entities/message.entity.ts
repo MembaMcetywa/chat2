@@ -16,9 +16,11 @@ export class Message {
   @ManyToOne(() => Channel, (channel) => channel.messages, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'channel_id' })
   channel: Channel;
 
   @ManyToOne(() => User, (user) => user.messages, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'sender_id' })
   sender: User;
 
   @Column({ type: 'bytea' }) encrypted_payload: Buffer;
@@ -28,9 +30,9 @@ export class Message {
   @Column({ default: 'aes-256-gcm' }) algo: string;
   @Column({ default: 'v1' }) key_version: string;
 
-  @Column({ nullable: true })
+  @ManyToOne(() => Message, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'reply_to' })
-  reply_to: number;
+  reply_to?: Message | null;
 
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
 }

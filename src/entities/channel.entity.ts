@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { ChannelMembership } from './channel-membership-entity';
@@ -25,6 +26,7 @@ export class Channel {
   @ManyToOne(() => User, (user) => user.createdChannels, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'created_by' })
   created_by: User;
 
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
